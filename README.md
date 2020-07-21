@@ -103,3 +103,19 @@ async def delayed_print(string: str, delay: int):
     await asyncio.sleep(delay)
     print(string)
 ```
+
+
+### Get the output of your event
+```python
+import cavalcade
+cavalcade.DefaultManager().start()
+
+
+@cavalcade.event(name='get_words')
+def get_words(sentence):
+    return sentence.split(' ')
+
+words = get_words('Hello World')
+words.wait()
+print(words.value())
+```
