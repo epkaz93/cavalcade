@@ -46,7 +46,10 @@ class EventOutput:
             return f'<{self.event.name} ({hex(id(self.event))}) is still pending completion>'
 
         else:
-            return self.event.raw_output.__repr__()
+            return f'<{self.event.name} ({hex(id(self.event))}) output {type(self.value())}>'
+
+    def value(self):
+        return self.event.raw_output
 
 
 class Event:
@@ -116,5 +119,3 @@ class Event:
     def wait(self):
         while not self.processed():
             time.sleep(0.2)
-
-        return self.output
