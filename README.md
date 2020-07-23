@@ -1,6 +1,6 @@
 # cavalcade
 *Cavalcade* is a **lightweight, asynchronous event library for Python**. 
-The main method for adding *events* is primarily via function decorators, 
+The main method for adding *events* is primarily via the event_factory function decorators, 
 although using Event objects is also perfectly legal.
 
 Events are managed by an *event manager* that runs in the background, and as 
@@ -9,7 +9,7 @@ events are called or created, they are added to a queue to be processed.
 ## Features
  * Support for **synchronous and asynchronous events**
  * A builtin **event manager** for queuing and processing events that runs in the background.
- * Support for **decorating functions/methods** as events
+ * Support for **decorating functions/methods** as event_factories
  * Support for **explicit event classes**
  * Support for manager **singletons**
  * Support for **callbacks** on completion of event
@@ -36,11 +36,17 @@ manager.stop()
   directly as it's not a *singleton*, The *DefaultManager* is the preferred
   reference implementation of this class. This class's purpose is to be subclassed. Also
   `cavalcade.managers.Manager`
+  * **`cavalcade.event_factory`:** The event_factory decorator, to be used when decorating
+  functions or methods. Also `cavalcade.decorators.event_factory`.
+  * **`cavalcade.EventFactory`:** The standard interface for defining events via decoration. 
+  Using the event decorator as above returns an object of this type. When an instance of this
+  class is called, it returns and schedules an Event instance. Also `cavalcade.events.EventFactory`.
   * **`cavalcade.event`:** The event decorator, to be used when decorating
   functions or methods. Also `cavalcade.decorators.event`.
   * **`cavalcade.Event`:** The base event object. Using the event decorator as
   above returns an object of this type. You can also subclass or instantiate
   this class directly. Also `cavalcade.events.Event`.
+
 
 # Examples
 
@@ -93,7 +99,7 @@ import cavalcade
 manager = cavalcade.DefaultManager()
 manager.start()
 
-@cavalcade.event()
+@cavalcade.event_factory()
 def event_print(string):
     print(string)
 
@@ -107,7 +113,7 @@ event_print('Hello World')
 import cavalcade
 import asyncio
 
-@cavalcade.event(name='Delayed_Print')
+@cavalcade.event_factory(name='Delayed_Print')
 async def delayed_print(string, delay):
     await asyncio.sleep(delay)
     print(string)
@@ -121,12 +127,12 @@ import asyncio
 # I'm going to use another event as my callback, which is good practice
 # That being said, there is no technical restriction to use an event
 
-@cavalcade.event(name='Done')
+@cavalcade.event_factory(name='Done')
 def done(event: cavalcade.Event):
     print(f'Event {event.name} Done')
 
 
-@cavalcade.event(name='Delayed_Print', callback=lambda: done(delayed_print))
+@cavalcade.event_factory(name='Delayed_Print', callback=lambda: done(delayed_print))
 async def delayed_print(string: str, delay: int):
     await asyncio.sleep(delay)
     print(string)
@@ -139,7 +145,7 @@ import cavalcade
 cavalcade.DefaultManager().start()
 
 
-@cavalcade.event(name='get_words')
+@cavalcade.event_factory(name='get_words')
 def get_words(sentence):
     return sentence.split(' ')
 
