@@ -52,7 +52,7 @@ class EventOutput:
         return self.event.raw_output
 
 
-class Event:
+class EventFactory:
     func = None
     f_args = None
     f_kwargs = None
@@ -61,7 +61,7 @@ class Event:
     c_kwargs = None
 
     manager = DefaultManager()
-    name = 'Event'
+    name = 'EventDecorator'
 
     def __init__(self, func: Callable, func_args: Union[Tuple, List] = (), func_kwargs: Dict = None,
                  callback: Callable = None, callback_args: Union[Tuple, List] = (), callback_kwargs: Dict = None,
@@ -77,6 +77,31 @@ class Event:
 
         self.manager = manager if manager else self.manager
         self.name = name if name else self.name
+
+    def __call__(self, *args, **kwargs):
+        kwargs.update(self.f_kwargs)
+        args = args + self.f_args
+
+        event = Event(func=self.func, func_args=self.f_args, func_kwargs=self.f_kwargs,
+                      callback=self.callback, callback_args=self.c_args, callback_kwargs=self.c_kwargs,
+                      manager=self.manager, name=self.name)
+
+        event.__call__(*args, **kwargs)
+
+        return event
+
+
+class Event(EventFactory):
+    output = None
+
+    def __init__(self, func: Callable, func_args: Union[Tuple, List] = (), func_kwargs: Dict = None,
+                 callback: Callable = None, callback_args: Union[Tuple, List] = (), callback_kwargs: Dict = None,
+                 manager: Manager = None, name: str = None):
+
+        super().__init__(func=func, func_args=func_args, func_kwargs=func_kwargs,
+                         callback=callback, callback_args=callback_args, callback_kwargs=callback_kwargs,
+                         manager=manager, name=name)
+
         self.output = EventOutput(self)
 
         self.raw_output = None
