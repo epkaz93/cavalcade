@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="cavalcade",
-    version="1.0.0",
+    version="1.0.1",
     author="Thomas Wilmot",
     author_email="thomaswilmot@gmail.com",
     description="A lightweight, asynchronous event library for Python",
