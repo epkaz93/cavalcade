@@ -79,11 +79,13 @@ class EventFactory:
         self.name = name if name else self.name
 
     def __call__(self, *args, **kwargs):
-        kwargs.update(self.f_kwargs)
-        args = args + self.f_args
+        callback = kwargs.get('callback', self.callback)
+        callback_args = kwargs.get('callback_args', self.c_args)
+        callback_kwargs = kwargs.get('callback_kwargs', self.c_kwargs)
+        name = kwargs.get('event_name', self.name)
 
         event = Event(func=self.func, func_args=self.f_args, func_kwargs=self.f_kwargs,
-                      callback=self.callback, callback_args=self.c_args, callback_kwargs=self.c_kwargs,
+                      callback=callback, callback_args=callback_args, callback_kwargs=callback_kwargs,
                       manager=self.manager, name=self.name)
 
         event.__call__(*args, **kwargs)
