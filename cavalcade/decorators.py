@@ -1,5 +1,4 @@
-from .events import Event
-from .graphs import Node
+from .events import Event, EventFactory
 
 
 def event(*args, **kwargs):
@@ -9,8 +8,8 @@ def event(*args, **kwargs):
     return generate
 
 
-def node(*args, **kwargs):
+def event_factory(*args, **kwargs):
     def generate(f):
-        e = Node(f, *args, **kwargs)
+        e = EventFactory(f, *args, **kwargs)
         return e
     return generate
